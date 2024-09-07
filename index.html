@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crop Disease Prediction</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url("https://cdn.pixabay.com/photo/2021/06/20/08/28/wheat-grass-6350274_1280.jpg");
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        /* Nav Bar Styles */
+        nav {
+            background-color: #007bff;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 14px 20px;
+            font-weight: bold;
+        }
+
+        nav a:hover {
+            background-color: #0056b3;
+        }
+
+        .active {
+            background-color: #0056b3;
+        }
+
+        .content {
+            padding: 20px;
+            text-align: center;
+        }
+
+        /* Weather Page Styles */
+        #weather-page {
+            display: none; /* Hide by default */
+            padding: 20px;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 470px;
+            background: linear-gradient(135deg, #00feba, #5b5b5b);
+            color: #fff;
+            margin: 100px auto 0;
+            border-radius: 20px;
+            padding: 40px 35px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .search {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .search input {
+            border: 0;
+            outline: 0;
+            background: #ebfffc;
+            color: #555;
+            padding: 10px 25px;
+            height: 60px;
+            border-radius: 30px;
+            flex: 1;
+            margin-right: 16px;
+            font-size: 18px;
+        }
+
+        .search button {
+            border: 0;
+            outline: 0;
+            background: #ebfffc;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .search button img {
+            width: 24px;
+        }
+
+        .weather-icon {
+            width: 170px;
+            margin-top: 30px;
+        }
+
+        .weather h1 {
+            font-size: 80px;
+            font-weight: 500;
+        }
+
+        .weather h2 {
+            font-size: 45px;
+            font-weight: 400;
+            margin-top: -10px;
+        }
+
+        .details {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            margin-top: 50px;
+        }
+
+        .col {
+            display: flex;
+            align-items: center;
+            text-align: left;
+        }
+
+        .col img {
+            width: 40px;
+            margin-right: 10px;
+        }
+
+        .humidity, .wind {
+            font-size: 28px;
+            margin-top: -6px;
+        }
+
+        .heading {
+            position: relative;
+            top: 0;
+            text-align: center;
+            color: white;
+            border: 1px solid black;
+            background-color: black;
+            padding: 10px 0;
+        }
+
+        /* Other content styles */
+        #imageInput {
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .result {
+            margin-top: 20px;
+        }
+
+        .result h2 {
+            color: green;
+        }
+
+        #chatContainer {
+            margin-top: 20px;
+        }
+
+        #chatMessages {
+            border: 1px solid #ccc;
+            padding: 10px;
+            height: 200px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+            text-align: left;
+        }
+
+        #messageInput {
+            width: calc(100% - 90px);
+            padding: 10px;
+        }
+
+        #sendMessageBtn {
+            width: 80px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <nav>
+        <a href="#" id="home" class="active">Home</a>
+        <a href="#" id="community">Community</a>
+        <a href="#" id="contact">Contact</a>
+        <a href="#" id="weather">Weather</a>
+    </nav>
+
+    <!-- Dynamic Content Area -->
+    <div class="content" id="content">
+        <!-- Initial content for Home page -->
+        <h1>Welcome to Crop Disease Prediction</h1>
+        <p>This is the Home page where you can predict crop diseases.</p>
+
+        <input type="file" id="imageInput" accept="image/*" />
+        <br />
+        <button id="predictBtn">Predict</button>
+        <div class="result" id="result"></div>
+
+        <!-- Chat Section -->
+        <h2>Chat with AI Assistant</h2>
+        <input type="text" id="chatInput" placeholder="Ask a question..." />
+        <br />
+        <button id="chatBtn">Send</button>
+        <div class="result" id="chatResult"></div>
+    </div>
+
+    <!-- Weather Page Content -->
+    <div id="weather-page">
+        <div class="card">
+            <h1 class="weather">Weather</h1>
+            <div class="search">
+                <input type="text" placeholder="Enter city" id="cityInput">
+                <button id="searchBtn"><img src="images/search-icon.png" alt="Search"></button>
+            </div>
+            <img class="weather-icon" src="" alt="Weather Icon" id="weatherIcon">
+            <div class="details">
+                <div class="col">
+                    <img src="images/humidity-icon.png" alt="Humidity">
+                    <div class="humidity" id="humidity"></div>
+                </div>
+                <div class="col">
+                    <img src="images/wind-icon.png" alt="Wind Speed">
+                    <div class="wind" id="wind"></div>
+                </div>
+            </div>
+            <div class="heading">Weather Information</div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script src="weather.js"></script>
+</body>
+</html>
+
+
